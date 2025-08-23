@@ -56,8 +56,9 @@ include = [
     "/llama.cpp/ggml/cmake",
     "/llama.cpp/common/cmake",
 
-    # Required for MTMD feature (specific tool only)
+    # Tool-specific CMakeLists.txt files (included conditionally based on features)
     "/llama.cpp/tools/mtmd/CMakeLists.txt",
+    "/llama.cpp/tools/rpc/CMakeLists.txt",
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -84,3 +85,4 @@ openmp = []
 # Only has an impact on Android.
 shared-stdcxx = []
 mtmd = []
+rpc = []

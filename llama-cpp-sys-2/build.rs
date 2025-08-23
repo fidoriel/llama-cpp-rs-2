@@ -223,10 +223,11 @@ if (NOT EMSCRIPTEN)
         cmake_content.push_str("    add_subdirectory(mtmd)\n");
     }
     
+    if cfg!(feature = "rpc") {
+        cmake_content.push_str("    add_subdirectory(rpc)\n");
+    }
+    
     // Future feature branches can add their tools here:
-    // if cfg!(feature = "rpc") {
-    //     cmake_content.push_str("    add_subdirectory(rpc)\n");
-    // }
     // if cfg!(feature = "server") {
     //     cmake_content.push_str("    add_subdirectory(server)\n");
     // }
@@ -324,6 +325,17 @@ fn main() {
             .header("wrapper_mtmd.h")
             .allowlist_function("mtmd_.*")
             .allowlist_type("mtmd_.*");
+    }
+
+    // Configure RPC feature if enabled
+    if cfg!(feature = "rpc") {
+        bindings_builder = bindings_builder
+            .clang_arg("-DGGML_RPC")
+            .allowlist_function("ggml_backend_rpc_.*")
+            .allowlist_function("ggml_backend_is_rpc")
+            .allowlist_function("ggml_backend_dev_.*")
+            .allowlist_function("ggml_backend_free")
+            .allowlist_type("ggml_backend_device");
     }
 
     // Configure Android-specific bindgen settings
@@ -495,8 +507,8 @@ fn main() {
 
     // Generate dynamic tools CMakeLists.txt based on enabled tool features
     let any_tool_features = cfg!(feature = "mtmd")
+        || cfg!(feature = "rpc")
         // Future tool features can be added here by other branches:
-        // || cfg!(feature = "rpc")
         // || cfg!(feature = "server")
         // || cfg!(feature = "quantize")
         ;
@@ -678,6 +690,10 @@ fn main() {
         if cfg!(feature = "cuda-no-vmm") {
             config.define("GGML_CUDA_NO_VMM", "ON");
         }
+    }
+
+    if cfg!(feature = "rpc") {
+        config.define("GGML_RPC", "ON");
     }
 
     // Android doesn't have OpenMP support AFAICT and openmp is a default feature. Do this here
