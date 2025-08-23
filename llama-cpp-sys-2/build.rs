@@ -234,6 +234,8 @@ if (NOT EMSCRIPTEN)
     // if cfg!(feature = "quantize") {
     //     cmake_content.push_str("    add_subdirectory(quantize)\n");
     // }
+    
+    // Split model loading doesn't need any tools - it's just a library feature
 
     cmake_content.push_str("endif()\n");
     
